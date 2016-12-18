@@ -526,10 +526,33 @@ void CrateApp::DrawScene()
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
     }
+	if (1)
+	{
+
+		//for test draw GDI
+		IDXGISurface1* bkbufDxgiSurface = NULL;
+		HRESULT hr = mSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), (void**)&bkbufDxgiSurface);
+		HDC outHDC = NULL;
+		if (SUCCEEDED(hr))
+		{
+			hr = bkbufDxgiSurface->GetDC(FALSE, &outHDC);
+			if (SUCCEEDED(hr))
+			{
+				TextOutA(outHDC, 100, 100, "Hello", 5);
+				bkbufDxgiSurface->ReleaseDC(NULL);
+			}
+			else
+			{
+				SAFE_RELEASE(bkbufDxgiSurface);
+			}
+		}
+		md3dImmediateContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+		ReleaseCOM(bkbufDxgiSurface);
+	}
 
 	HR(mSwapChain->Present(0, 0));
 
-	if (1)
+	if (0)
 	{
 	ID3D11Texture2D* backBuffer;
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
